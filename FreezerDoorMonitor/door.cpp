@@ -4,6 +4,7 @@
 #include "door.h"
 
 #define MS_PER_MIN 60000
+#define DOOR_TIMEOUT_MS (MS_PER_MIN)
 
 Door::Door()
   : _pin(0)
@@ -37,31 +38,32 @@ DOOR_STATE Door::run()
     case DOOR_RED:
       if (doorIn == LOW) // closed
       {
+        _stateStartMs = now;
         _state = DOOR_GREEN;
+        Serial.println("Door Closed");
       }
     break;
     case DOOR_YELLOW:
       if (doorIn == LOW) // closed
       {
+        _stateStartMs = now;
         _state = DOOR_GREEN;
+        Serial.println("Door Closed");
       }
-      else if (elapsed > MS_PER_MIN) // yellow for more than 1 minute
+      else if (elapsed > DOOR_TIMEOUT_MS) // yellow for the timeout
       {
          _state = DOOR_RED;
+         Serial.println("Door Alarm!");
       }
     break;
     case DOOR_GREEN:
       if (doorIn == HIGH) // opened
       {
+        _stateStartMs = now;
         _state = DOOR_YELLOW;
+        Serial.println("Door Opened");
       }
     break;
-  }
-
-  // if we have changed state, then update the time the state started. 
-  if (_state != startState)
-  {
-    _stateStartMs = now;
   }
   
   return _state;
