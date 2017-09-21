@@ -44,16 +44,18 @@ void loop () {
     int tenMinutes = now.minute() / 10;
     int minutes    = now.minute() % 10;
 
-    switch(now.minute() % 4){
+    //switch(now.minute() % 4){
+    switch(0){
     case 0:
       // Top of the hour!  All normal!
       if (tenHours > 0)
       {
-        matrix.writeDigitNum(0, tenHours,   true);
+        // matrix.writeDigitNum(0, tenHours,   true);
+        matrix.writeDigitNum(0, tenHours,   false);
       }
       else
       {
-        matrix.writeDigitRaw(0, 1 << 7);
+        //matrix.writeDigitRaw(0, 1 << 7);
       }
       matrix.writeDigitNum(1, hours,      false);
       matrix.writeDigitNum(3, tenMinutes, false);
@@ -86,7 +88,6 @@ void loop () {
       matrix.writeDigitRaw(1, up[hours]);
       matrix.writeDigitRaw(3, up[tenMinutes] | (1<< 7));
       matrix.writeDigitRaw(4, up[minutes]);
-      break;
       break;
     case 3:
     // 45-59 -- upsideown and backwards
