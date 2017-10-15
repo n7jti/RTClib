@@ -112,8 +112,8 @@ public:
     static Ds3231SqwPinMode readSqwPinMode();
     static void writeSqwPinMode(Ds3231SqwPinMode mode);
     static DateTime alarm1(void);
-    static void setAlarm1(const DateTime& dt, uint8_t mode);
-    static void setAlarm1TimeMode(const DateTime& dt, DS3231AlarmMode = DS3231_ALARM1_MODE_HOURS_MINUTES_SECONDS_MATCH);
+    static void setAlarm1(const DateTime& dt,uint8_t day, uint8_t alarmMask);
+    static void setAlarm1TimeMode(const DateTime& dt, Ds3231Alarm1Mode = DS3231_ALARM1_MODE_HOURS_MINUTES_SECONDS_MATCH);
     static void setAlarm1DayMode(const DateTime& dt, Ds3231Day);
     static void setAlarm1DateMode(const DateTime& dt, uint32_t date);
     static boolean alarm1Flag(void);
