@@ -504,3 +504,70 @@ void RTC_DS3231::writeSqwPinMode(Ds3231SqwPinMode mode) {
 
   //Serial.println( read_i2c_register(DS3231_ADDRESS, DS3231_CONTROL), HEX);
 }
+
+DateTime RTC_DS3231::alarm1(void){
+  Wire.beginTransmission(DS3231_ADDRESS);
+  Wire.write((byte)DS3231_ALARM);  
+  Wire.endTransmission();
+
+  Wire.requestFrom(DS3231_ADDRESS, 4);
+  uint8_t ss = bcd2bin(Wire._I2C_READ() & 0x7F);
+  uint8_t mm = bcd2bin(Wire._I2C_READ() & 0x7F);
+  uint8_t hh = bcd2bin(Wire._I2C_READ() & 0x7F);
+  Wire._I2C_READ();
+
+  return DateTime (2000, 1, 1, hh, mm, ss); 
+}
+
+// alarmMask as used as inputs to this function call
+// ---------------------------------------------------------------------------------
+// |  bit7   |  bit6   |  bit5   |  bit4   |  bit3   |  bit2   |  bit1   |  bit0   |
+// |  MSB    |         |         |         |         |         |         |  LSB    |
+// |reserved |reserved |reserved |  DY/~DT |  A1M4   |  A1M3   |  A1M2   |  A1M1   |
+// ---------------------------------------------------------------------------------
+//
+//  See Table 2 Alarm Bit Masks for a full description
+void RTC_DS3231::setAlarm1(const DateTime& dt,uint8_t day, uint8_t alarmMask)
+{
+  Wire.beginTransmission(DS3231_ADDRESS);
+  Wire.write((byte)DS3231_ALARM);           // start at the alarm regiters
+  uint8_t am1 = ((alarmMask & 0b000001) << 7);
+  uint8_t am2 = ((alarmMask & 0b000010) << 6);
+  uint8_t am3 = ((alarmMask & 0b000100) << 5);
+  uint8_t am4 = ((alarmMask & 0b001000) << 4);
+  uint8_t dy  = ((alarmMask & 0b010000) << 2);
+ 
+  Wire._I2C_WRITE( (bin2bcd(second(dt)) & 0x7F) | am1 ); 
+  Wire._I2C_WRITE( (bin2bcd(minute(dt)) & 0x7F) | am2 );
+  Wire._I2C_WRITE( (bin2bcd(hour(dt))   & 0x7F  | am3 );
+  Wire._I2C_WRITE( (bin2bcd(day) | am4 | dy);
+                    
+  Wire.endTransmission();
+}
+
+void RTC_DS3231::setAlarm1TimeMode(const DateTime& dt, DS3231AlarmMode mode){
+    setAlarm(dt, 1, (uint8_t)mode);
+}
+
+static void setAlarm1DayMode(const DateTime& dt, Ds3231Day day)
+{
+    setAlarm(dt, (uint8_t) day, (uint8_t)0);
+}
+
+static void setAlarm1DateMode(const DateTime& dt, uint32_t date)
+{
+    uint8_t alarmMask = 0b00010000; 
+    setAlarm(dt, (uint8_t) date, alarmMask);
+}
+
+boolean RTC_DS3231::alarm1Flag(void){
+  uint8_t statreg = read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG);
+  return statreg & 0x01;
+}
+
+RTC_DS3231::resetAlarm1Flag(void){
+  // write a 0 to the first bit of the DS3231_STATUSREG
+  uint8_t statreg = read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG);
+  statreg &= (uint8_t)~0x01; // turn off Alarm 1 flag. 
+  write_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG, statreg); 
+}

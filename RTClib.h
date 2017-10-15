@@ -19,6 +19,7 @@ class TimeSpan;
 #define DS3231_ADDRESS  0x68
 #define DS3231_CONTROL  0x0E
 #define DS3231_STATUSREG 0x0F
+#define DS3231_ALARM    0x07
 
 #define SECONDS_PER_DAY 86400L
 
@@ -93,7 +94,14 @@ public:
 };
 
 // RTC based on the DS3231 chip connected via I2C and the Wire library
-enum Ds3231SqwPinMode { DS3231_OFF = 0x01, DS3231_SquareWave1Hz = 0x00, DS3231_SquareWave1kHz = 0x08, DS3231_SquareWave4kHz = 0x10, DS3231_SquareWave8kHz = 0x18 };
+enum Ds3231SqwPinMode { DS3231_OFF = 0x01, DS3231_SquareWave1Hz  = 0x00, DS3231_SquareWave1kHz = 0x08, DS3231_SquareWave4kHz = 0x10, DS3231_SquareWave8kHz = 0x18 };
+
+enum Ds3231Alarm1Mode { DS3231_ALARM1_MODE_ONCE_PER_SECOND              = 0b1111, 
+                        DS3231_ALARM1_MODE_SECONDS_MATCH                = 0b1110,
+                        DS3231_ALARM1_MODE_MINUTES_SECONDS_MATCH        = 0b1100,
+                        DS3231_ALARM1_MODE_HOURS_MINUTES_SECONDS_MATCH  = 0b1000  };
+
+enum Ds3231Day { Ds3231_SUNDAY = 1, Ds3231_MONDAY = 2, Ds3231_TUESDAY = 3, Ds3231_WEDNESDAY = 4, Ds3231_THURSDAY = 5, Ds3231_FRIDAY = 6, Ds3231_SATURDAY = 7};
 
 class RTC_DS3231 {
 public:
@@ -103,6 +111,14 @@ public:
     static DateTime now();
     static Ds3231SqwPinMode readSqwPinMode();
     static void writeSqwPinMode(Ds3231SqwPinMode mode);
+    static DateTime alarm1(void);
+    static void setAlarm1(const DateTime& dt, uint8_t mode);
+    static void setAlarm1TimeMode(const DateTime& dt, DS3231AlarmMode = DS3231_ALARM1_MODE_HOURS_MINUTES_SECONDS_MATCH);
+    static void setAlarm1DayMode(const DateTime& dt, Ds3231Day);
+    static void setAlarm1DateMode(const DateTime& dt, uint32_t date);
+    static boolean alarm1Flag(void);
+    static void resetAlarm1Flag(void);
+    
 };
 
 
