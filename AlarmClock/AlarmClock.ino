@@ -46,6 +46,9 @@
 #define CARDCS          PC5     // Card chip select pin
 #define VS1053_DREQ     PA15    // VS1053 Data request, ideally an Interrupt pin
 
+#define PDT_ADJ -25200
+#define PST_ADJ -28800
+
 LEDMatrix matrix = LEDMatrix();
 RTC_DS3231 RTC;
 TimeScroller timeScroller(matrix, RTC);
@@ -74,7 +77,7 @@ bool connectAP(void)
 void SetRTCFromNTP(RTC_DS3231 rtc)
 {
   AdafruitUDP ntpUDP;
-  UdpNtpClient timeClient(ntpUDP, "time.nist.gov", -25200);
+  UdpNtpClient timeClient(ntpUDP, "time.nist.gov", PST_ADJ);
   timeClient.update();
   time_t time = timeClient.getEpochTime();
   rtc.adjust(time);
