@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Object files
 *.o
 *.ko
@@ -31,3 +32,10 @@
 # Debug files
 *.dSYM/
 *.su
+=======
+*.vpj
+*.vpw
+*.vpwhist
+*.vtg
+
+>>>>>>> bfb1d4df459191a4990d6bc0a9d522d51cb9aacb
