@@ -7,9 +7,7 @@
 #######################################
 
 DateTime	KEYWORD1
-Ds1307SqwPinMode	KEYWORD1
-Ds3231Alarm1Mode	KEYWORD1
-Ds3231Day	KEYWORD1
+TimeSpan	KEYWORD1
 RTC_DS1307	KEYWORD1
 RTC_Millis	KEYWORD1
 TimeSpan	KEYWORD1
