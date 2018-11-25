@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Arduino
 My Arduino projects
 =======
